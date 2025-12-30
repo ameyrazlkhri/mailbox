@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Leave Me a Letter 💌</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffe6f0, #ffcce6);
+      margin: 0;
+      padding: 40px;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Cedarville Cursive', cursive;
+      font-size: 48px;
+      color: #ff6b81;
+      margin-bottom: 40px;
+    }
+
+    .letter-box {
+      background: #fff0f5;
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 380px;
+      margin: 0 auto;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      border: 2px solid #ffd1e0;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      width: 100%;
+      max-width: 100%;
+      padding: 15px;
+      border-radius: 12px;
+      border: 2px solid #ffb6c1;
+      font-family: 'Cedarville Cursive', cursive;
+      font-size: 18px;
+      resize: none;
+      margin-bottom: 20px;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+      box-sizing: border-box;
+    }
+
+    label, select, input[type=color], button {
+      width: 100%;
+      display: block;
+      margin-bottom: 20px;
+    }
+
+    select, input[type=color] {
+      padding: 10px;
+      border-radius: 12px;
+      border: 2px solid #ffb6c1;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    button {
+      padding: 12px;
+      background: #ff6b81;
+      color: white;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    button:hover {
+      background: #ff4c61;
+      transform: scale(1.05);
+    }
+
+    #stickerPreview {
+      font-size: 36px;
+      margin-bottom: 20px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<h1>💌 Write a Letter</h1>
+
+<div class="letter-box">
+  <span id="stickerPreview">✉️</span>
+  <textarea id="letter" placeholder="Write your love letter here..." rows="5"></textarea>
+
+  <label for="color">Choose envelope colour:</label>
+  <select id="color">
+    <option>Pink</option>
+    <option>Blue</option>
+    <option>Beige</option>
+  </select>
+
+  <label for="sticker">Choose a sticker:</label>
+  <select id="sticker">
+    <option>💌</option>
+    <option>🎄</option>
+    <option>⭐</option>
+    <option>❄️</option>
+  </select>
+
+  <label for="textColor">Choose text color:</label>
+  <input type="color" id="textColor" value="#d97c6a">
+
+  <button id="sendBtn">Send Letter</button>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+
+// --- Your Firebase Config ---
+const firebaseConfig = {
+  apiKey: "AIzaSyBsAlAk1b6XWckFWyUb4xWnRYLGVGbl4vI",
+  authDomain: "my-mailbox-1e0f1.firebaseapp.com",
+  databaseURL: "https://my-mailbox-1e0f1-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "my-mailbox-1e0f1",
+  storageBucket: "my-mailbox-1e0f1.firebasestorage.app",
+  messagingSenderId: "606445250262",
+  appId: "1:606445250262:web:3709008dea85f439210b77",
+  measurementId: "G-QLG99DGX9E"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+const letterInput = document.getElementById('letter');
+const colorSelect = document.getElementById('color');
+const stickerSelect = document.getElementById('sticker');
+const textColorInput = document.getElementById('textColor');
+const sendBtn = document.getElementById('sendBtn');
+const stickerPreview = document.getElementById('stickerPreview');
+
+stickerSelect.addEventListener('change', () => {
+  stickerPreview.textContent = stickerSelect.value;
+});
+
+sendBtn.addEventListener('click', function() {
+  const letterText = letterInput.value.trim();
+  const letterColor = colorSelect.value;
+  const letterSticker = stickerSelect.value;
+  const letterTextColor = textColorInput.value;
+
+  if(letterText === '') {
+    alert('Please write a letter before sending!');
+    return;
+  }
+
+  const lettersRef = ref(db, 'letters');
+
+  push(lettersRef, {
+    text: letterText,
+    color: letterColor,
+    sticker: letterSticker,
+    textColor: letterTextColor
+  }).then(() => {
+    alert('Letter sent! You can check your mailbox.');
+    letterInput.value = '';
+    stickerPreview.textContent = '✉️';
+    textColorInput.value = '#d97c6a';
+  }).catch(err => {
+    alert('Error sending letter: ' + err);
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,141 +1,185 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Mailbox 💌</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cedarville+Cursive&display=swap" rel="stylesheet">
+  <title>Zaid & Amira's Secret 💌</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300;500;600&family=Cedarville+Cursive&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --primary: #ff758f;
+      --glass: rgba(255, 255, 255, 0.9);
+      --border: rgba(255, 255, 255, 0.3);
+      --soft-pink: #fde2e4; 
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      text-align: center;
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: #5d4a4a;
+      background-color: var(--soft-pink);
+      background-attachment: fixed;
+    }
+
+    h1, h2, h3, #welcomeHeader { 
+      font-family: 'Cedarville Cursive', cursive; 
+      color: #ff4d6d; 
+    }
+
+    .glass-card {
+      background: var(--glass);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
       padding: 40px;
-      background: linear-gradient(135deg, #ffe6f0, #ffcce6);
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 8px 32px 0 rgba(255, 117, 143, 0.1);
+      margin: 40px auto;
+      box-sizing: border-box;
+      text-align: center;
     }
 
-    h1 {
-      font-family: 'Cedarville Cursive', cursive;
-      font-size: 48px;
-      color: #ff6b81;
-      margin-bottom: 10px;
+    #lockScreen { margin-top: 100px; }
+    #mainContent, #game1, #game2, #game3, #finalInbox { display: none; }
+
+    input[type="password"], select { 
+        width: 100%; 
+        height: 52px; 
+        padding: 0 15px; 
+        margin: 12px 0; 
+        border: 1px solid #ddd; 
+        border-radius: 12px; 
+        font-family: 'Poppins', sans-serif; 
+        outline: none;
+        box-sizing: border-box; 
+        font-size: 14px;
+        background: white;
     }
 
-    #letterCount {
-      font-size: 20px;
-      color: #d97c6a;
-      margin-bottom: 20px;
-    }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 20px; }
+    .card { aspect-ratio: 1/1; background: #ffe5ec; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; color: transparent; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    .card.flipped { background: #fff; color: initial; transform: rotateY(180deg); box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
 
-    #mailbox {
-      padding: 20px;
-      min-height: 250px;
-      background: rgba(255,255,255,0.7);
-      border-radius: 20px;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      margin-top: 20px;
+    #impossibleArea { height: 250px; position: relative; margin-top: 20px; border: 1px dashed #ffb6c1; border-radius: 15px; overflow: hidden; }
+    #impossibleBtn { 
+        position: absolute; 
+        transition: all 0.1s ease-out; /* Faster transition for harder challenge */
+        padding: 15px 30px; 
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        white-space: nowrap;
+        z-index: 10;
     }
+    #scanBar { width: 0%; height: 6px; background: var(--primary); margin: 15px auto; border-radius: 3px; }
 
-    .envelope {
-      display: flex;
-      width: 70px;
-      height: 50px;
-      margin: 10px;
-      border-radius: 12px;
-      cursor: pointer;
-      color: white;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 24px;
-      transition: transform 0.3s ease;
-      box-shadow: 2px 2px 8px rgba(0,0,0,0.2);
-      position: relative;
-    }
+    #heartZone { height: 300px; position: relative; background: rgba(255,255,255,0.4); border-radius: 15px; overflow: hidden; margin-top: 15px; border: 1px solid #ffb6c1; }
+    .floating-heart { position: absolute; font-size: 32px; cursor: pointer; user-select: none; }
 
-    .envelope:hover {
-      transform: translateY(-10px) rotate(-5deg) scale(1.1);
+    #mailbox { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; margin-top: 20px; }
+    .envelope { 
+        width: 80px; height: 55px; background: #ffc1cc; border-radius: 6px; 
+        display: flex; align-items: center; justify-content: center; font-size: 26px; 
+        cursor: pointer; transition: 0.3s;
+        background-image: linear-gradient(135deg, rgba(255,255,255,0.2) 50%, transparent 50%);
     }
+    .envelope:hover { transform: translateY(-5px); background: #ffb3c1; }
 
     #letterDisplay {
-      font-family: 'Cedarville Cursive', cursive;
-      font-size: 20px;
-      line-height: 1.6;
-      background: #fff0f5;
-      padding: 25px;
-      border-radius: 15px;
-      border: 2px solid #d97c6a;
-      box-shadow: 3px 3px 10px rgba(0,0,0,0.2);
-      display: none;
-      width: 320px;
-      margin: 30px auto 0 auto;
+      display: none; 
+      background: white; 
+      padding: 50px 40px 40px 65px;
+      margin-top: 30px;
+      font-family: 'Cedarville Cursive', cursive; 
+      font-size: 24px; 
+      text-align: left;
+      border-radius: 8px;
+      position: relative;
       white-space: pre-wrap;
-      word-wrap: break-word;
-      color: inherit;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+      line-height: 1.6em;
+      background-image: linear-gradient(rgba(173, 216, 230, 0.6) 1px, transparent 1px);
+      background-size: 100% 1.6em;
+      transition: background-color 0.4s ease;
     }
 
-    #clearBtn {
-      padding: 12px 25px;
-      background: #ff6b81;
-      color: white;
-      border: none;
-      border-radius: 15px;
-      cursor: pointer;
-      font-size: 18px;
-      font-weight: bold;
-      margin-bottom: 20px;
-      transition: background 0.2s, transform 0.2s;
-    }
-
-    #clearBtn:hover {
-      background: #ff4c61;
-      transform: scale(1.05);
-    }
-
-    .heart {
-      position: absolute;
-      width: 12px;
-      height: 12px;
-      background: red;
-      transform: rotate(45deg);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: float 2s ease-out forwards;
-    }
-
-    .heart::before,
-    .heart::after {
+    #letterDisplay::before {
       content: '';
       position: absolute;
-      width: 12px;
-      height: 12px;
-      background: red;
-      border-radius: 50%;
+      top: 0;
+      left: 50px;
+      height: 100%;
+      width: 2px;
+      background-color: rgba(255, 0, 0, 0.3);
     }
-    .heart::before { top: -6px; left: 0; }
-    .heart::after { top: 0; left: -6px; }
 
-    @keyframes float {
-      0% { transform: translateY(0) rotate(45deg); opacity: 1; }
-      100% { transform: translateY(-100px) rotate(45deg); opacity: 0; }
+    button { 
+        padding: 14px 28px; background: var(--primary); color: white; border: none; 
+        border-radius: 50px; cursor: pointer; font-weight: 600; font-family: 'Poppins', sans-serif;
+        letter-spacing: 1px; transition: 0.3s;
     }
+    button:hover { background: #ff4d6d; }
   </style>
 </head>
 <body>
 
-<h1>📬 Your Mailbox</h1>
-<div id="letterCount"></div>
-<button id="clearBtn">Clear Inbox</button>
-<div id="mailbox"></div>
-<div id="letterDisplay"></div>
+<div id="lockScreen" class="glass-card">
+  <h1>Welcome Home 🏠</h1>
+  <p style="font-size: 13px; color: #ff758f; margin-bottom: 5px;">An important date (no dashes)</p>
+  <select id="userSelect"><option value="zaid">Zaid :D</option><option value="amira">Amira :)</option></select>
+  <input type="password" id="secretCode" placeholder="Secret Code">
+  <button id="unlockBtn" style="width: 100%; margin-top: 10px;">Read Mailbox</button>
+</div>
 
-<!-- Firebase SDKs -->
+<div id="mainContent">
+  <div id="intro" class="glass-card">
+      <h2 id="msgCount">Checking your mail...</h2>
+      <p style="line-height: 1.6;">Your letters are waiting. To get to them, you need to prove your patience.</p>
+      <button onclick="showGame1()">Begin Trials</button>
+  </div>
+
+  <div id="game1" class="glass-card">
+    <h3>Trial I: Memory</h3>
+    <p>Match the pairs to unlock the next stage.</p>
+    <div class="grid" id="cardGrid"></div>
+  </div>
+
+  <div id="game2" class="glass-card">
+    <h3>Trial II: Authentication</h3>
+    <div id="scanMsg">Initializing bio-scan...</div>
+    <div id="scanBar"></div>
+    <div id="impossibleArea" style="display: none;">
+        <p id="robotHint" style="font-weight: 500; margin: 15px;">Verify you are human.</p>
+        <button id="impossibleBtn">I am Human</button>
+    </div>
+  </div>
+
+  <div id="game3" class="glass-card">
+    <h3>Final Trial: Heart Catcher</h3>
+    <p>Catch 10 flying hearts to open the vault.</p>
+    <div id="heartZone"></div>
+    <div id="heartCount" style="font-weight: 600; color: #ff758f; margin-top: 15px;">Hearts: 0/10</div>
+  </div>
+
+  <div id="finalInbox">
+    <div class="glass-card">
+        <h1 id="welcomeHeader">Your Letters</h1>
+        <div id="mailbox"></div>
+        <div id="letterDisplay"></div>
+        <button onclick="clearInbox()" style="background: #bbb; font-size: 11px; margin-top: 30px;">Clear Inbox</button>
+        <button onclick="location.reload()" style="background: transparent; color: #888; border: 1px solid #ddd; margin-top: 10px;">Lock</button>
+    </div>
+  </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-  import { getDatabase, ref, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
+  import { getDatabase, ref, onValue, onChildAdded, remove } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-database.js";
 
-  // --- Your Firebase Config ---
   const firebaseConfig = {
     apiKey: "AIzaSyBsAlAk1b6XWckFWyUb4xWnRYLGVGbl4vI",
     authDomain: "my-mailbox-1e0f1.firebaseapp.com",
@@ -143,72 +187,155 @@
     projectId: "my-mailbox-1e0f1",
     storageBucket: "my-mailbox-1e0f1.firebasestorage.app",
     messagingSenderId: "606445250262",
-    appId: "1:606445250262:web:3709008dea85f439210b77",
-    measurementId: "G-QLG99DGX9E"
+    appId: "1:606445250262:web:3709008dea85f439210b77"
   };
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-  const lettersRef = ref(db, 'letters');
+  let currentUser = "";
+  let failedAttempts = 0;
 
-  const mailbox = document.getElementById('mailbox');
-  const letterDisplay = document.getElementById('letterDisplay');
-  const letterCount = document.getElementById('letterCount');
-  const clearBtn = document.getElementById('clearBtn');
+  document.getElementById('unlockBtn').onclick = () => {
+    if(document.getElementById('secretCode').value === "18102025") {
+      currentUser = document.getElementById('userSelect').value;
+      document.getElementById('lockScreen').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+      checkCount();
+    } else { alert("Maybe its an anniversary? (who knows)... ❌"); }
+  };
 
-  const colors = { Pink: '#ffb6c1', Blue: '#add8e6', Beige: '#f5f5dc' };
-
-  let letters = [];
-
-  function addEnvelope(letter) {
-    const env = document.createElement('div');
-    env.className = 'envelope';
-    env.style.background = colors[letter.color] || '#ffb6c1';
-    env.textContent = letter.sticker || "✉️";
-    env.addEventListener('click', () => {
-      letterDisplay.style.display = 'block';
-      letterDisplay.style.color = letter.textColor || '#d97c6a';
-      letterDisplay.textContent = letter.text;
-
-      // Hearts pop out
-      for (let i = 0; i < 5; i++) {
-        const heart = document.createElement('div');
-        heart.className = 'heart';
-        heart.style.left = env.offsetLeft + 20 + Math.random()*20 + 'px';
-        heart.style.top = env.offsetTop - 10 + 'px';
-        document.body.appendChild(heart);
-        setTimeout(() => heart.remove(), 2000 + Math.random()*500);
-      }
+  function checkCount() {
+    onValue(ref(db, 'letters/' + currentUser), snap => {
+      const count = snap.exists() ? Object.keys(snap.val()).length : 0;
+      document.getElementById('msgCount').innerText = `You have ${count} messages waiting!`;
     });
-    mailbox.appendChild(env);
   }
 
-  function updateCount() {
-    letterCount.textContent = `You have ${letters.length} letters in your mailbox 💌`;
+  window.showGame1 = () => {
+    document.getElementById('intro').style.display = 'none';
+    document.getElementById('game1').style.display = 'block';
+    const emojis = ['🌹', '🐻', '🍦', '🍕', '🌙', '🐈', '✨', '🎀'];
+    const cards = [...emojis, ...emojis].sort(() => Math.random() - 0.5);
+    const grid = document.getElementById('cardGrid');
+    let flipped = []; let matched = 0;
+    cards.forEach(emoji => {
+      const card = document.createElement('div');
+      card.className = 'card'; card.innerHTML = emoji;
+      card.onclick = () => {
+        if(flipped.length < 2 && !card.classList.contains('flipped')) {
+          card.classList.add('flipped'); flipped.push(card);
+          if(flipped.length === 2) {
+            if(flipped[0].innerHTML === flipped[1].innerHTML) {
+                matched++; flipped = [];
+                if(matched === 8) setTimeout(startRobotScan, 1000);
+            } else { setTimeout(() => { flipped.forEach(c => c.classList.remove('flipped')); flipped = []; }, 600); }
+          }
+        }
+      };
+      grid.appendChild(card);
+    });
+  };
+
+  function startRobotScan() {
+    document.getElementById('game1').style.display = 'none';
+    document.getElementById('game2').style.display = 'block';
+    let width = 0;
+    const bar = document.getElementById('scanBar');
+    const interval = setInterval(() => {
+        width += 1;
+        bar.style.width = width + "%";
+        if(width >= 100) {
+            clearInterval(interval);
+            document.getElementById('scanMsg').innerText = "Bio-scan failed. Authentication required.";
+            document.getElementById('impossibleArea').style.display = 'block';
+            initImpossibleButton();
+        }
+    }, 40);
   }
 
-  // Listen for new letters in real-time
-  onChildAdded(lettersRef, (snapshot) => {
-    const letter = snapshot.val();
-    letters.push(letter);
-    addEnvelope(letter);
-    updateCount();
-  });
+  function initImpossibleButton() {
+    const btn = document.getElementById('impossibleBtn');
+    let scale = 1; 
+    
+    btn.onmouseover = () => {
+      if(failedAttempts < 5) {
+        failedAttempts++;
+        // HARDER VERSION: Teleport and Shrink
+        btn.style.left = Math.random() * 80 + '%';
+        btn.style.top = Math.random() * 80 + '%';
+        scale -= 0.15;
+        btn.style.transform = `translate(-50%, -50%) scale(${scale})`;
+      } else {
+        document.getElementById('robotHint').innerHTML = "<i style='color:#ff758f'>Since you're cute, ill let this slide :)</i>";
+        btn.style.position = 'relative';
+        btn.style.left = '50%'; 
+        btn.style.top = '20px';
+        btn.style.transform = 'translateX(-50%) scale(1)';
+        btn.innerText = "Access Granted";
+        btn.onmouseover = null;
+        btn.onclick = () => { 
+            document.getElementById('game2').style.display='none'; 
+            document.getElementById('game3').style.display='block'; 
+            setupHeartGame(); 
+        };
+      }
+    };
+  }
 
-  // Clear all letters
-  clearBtn.addEventListener('click', () => {
-    if(confirm('Are you sure you want to clear all letters?')) {
-      remove(lettersRef).then(() => {
-        letters = [];
-        mailbox.innerHTML = '';
-        letterDisplay.style.display = 'none';
-        updateCount();
-        alert('Inbox cleared!');
-      }).catch(err => alert('Error clearing inbox: ' + err));
+  function setupHeartGame() {
+    const zone = document.getElementById('heartZone');
+    let caught = 0;
+    for(let i=0; i<10; i++) {
+        const h = document.createElement('div');
+        h.className = 'floating-heart'; h.innerHTML = '💖';
+        h.style.left = Math.random() * 80 + '%'; h.style.top = Math.random() * 80 + '%';
+        zone.appendChild(h);
+        
+        let dx = (Math.random() - 0.5) * 5;
+        let dy = (Math.random() - 0.5) * 5;
+        const move = setInterval(() => {
+            let x = parseFloat(h.style.left);
+            let y = parseFloat(h.style.top);
+            if(x < 0 || x > 92) dx *= -1;
+            if(y < 0 || y > 92) dy *= -1;
+            h.style.left = (x + dx) + '%';
+            h.style.top = (y + dy) + '%';
+        }, 30);
+
+        h.onclick = () => {
+            h.remove(); clearInterval(move); caught++;
+            document.getElementById('heartCount').innerText = `Hearts: ${caught}/10`;
+            if(caught === 10) {
+                setTimeout(() => { document.getElementById('game3').style.display='none'; document.getElementById('finalInbox').style.display='block'; loadLetters(); }, 500);
+            }
+        };
     }
-  });
-</script>
+  }
 
+  function loadLetters() {
+    const lettersRef = ref(db, 'letters/' + currentUser);
+    onChildAdded(lettersRef, (snapshot) => {
+      const letter = snapshot.val();
+      const env = document.createElement('div');
+      env.className = 'envelope'; env.innerHTML = letter.sticker || '💌';
+      env.onclick = () => {
+        const display = document.getElementById('letterDisplay');
+        display.style.display = 'block'; 
+        display.style.color = letter.textColor;
+        display.style.backgroundColor = letter.paperColor || '#ffffff';
+        display.textContent = letter.text;
+        display.scrollIntoView({ behavior: 'smooth' });
+      };
+      document.getElementById('mailbox').appendChild(env);
+    });
+  }
+
+  window.clearInbox = () => {
+      if(confirm("Confirm deletion of all mail?")) {
+          remove(ref(db, 'letters/' + currentUser)).then(() => location.reload());
+      }
+  };
+</script>
 </body>
 </html>
 
